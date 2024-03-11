@@ -75,7 +75,7 @@ const PodcastDetail = ({ podcastId }: Props) => {
               </div>
               <div className="w-full shadow-md mt-3 flex justify-center p-3">
                 <Table<TableData>
-                  data={results?.results.map((podcast) => ({
+                  data={results?.results.map((podcast: PodcastEpisode) => ({
                     ...podcast,
                     id: podcast.trackId,
                   }))}

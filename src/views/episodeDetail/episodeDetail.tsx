@@ -71,9 +71,10 @@ const EpisodeDetail = ({ episodeId, podcastId }: Props) => {
       rightSide={
         <div className="shadow-md">
           <h2 className="font-bold p-3 text-start">{episodeTrackName}</h2>
-          <p className="text-start p-3 border-b-2 border-gray-100 ">
-            {episodeDescription}
-          </p>
+          <div
+            dangerouslySetInnerHTML={{ __html: episodeDescription }}
+            className="text-start p-3 border-b-2 border-gray-100 "
+          ></div>
           {/* the audio element will be provided by the browser so it might not look like the one in the image provided */}
           <audio
             className="w-full p-3 rounded-none"
