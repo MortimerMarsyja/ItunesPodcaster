@@ -19,4 +19,7 @@ export default defineConfig({
       "@signals": "/src/signals",
     },
   },
+  build: {
+    minify: process.env.BUILD_DEV ? false : "terser",
+  },
 });
