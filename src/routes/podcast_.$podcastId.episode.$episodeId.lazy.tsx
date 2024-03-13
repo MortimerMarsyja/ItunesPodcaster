@@ -5,14 +5,14 @@ import MainLayout from "@layouts/mainLayout";
 const routeApi = getRouteApi("/podcasts/$podcastId/episode/$episodeId");
 
 const Episode = () => {
-  const routeParams = routeApi.useParams();
+  const routeParams = routeApi.useParams<{
+    podcastId: string;
+    episodeId: string;
+  }>();
   const { episodeId, podcastId } = routeParams;
   return (
     <MainLayout>
-      <EpisodeDetail
-        episodeId={episodeId as number}
-        podcastId={podcastId as number}
-      />
+      <EpisodeDetail episodeId={episodeId} podcastId={podcastId} />
     </MainLayout>
   );
 };

@@ -1,5 +1,5 @@
 import Podcard from "@components/podcard/podcard";
-import { Episode, PodcastResponse } from "@definitions/index";
+import { Episode, PodcastResponse } from "src/definitions/index";
 import PodcastLayout from "@layouts/podcastLayout";
 import { podcasts } from "@signals/podcastSignal";
 import { episode } from "@signals/signalEpisode";

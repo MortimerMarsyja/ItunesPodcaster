@@ -1,12 +1,13 @@
 import Podcard from "@components/podcard/podcard";
 import Table from "@components/table";
-import { PodcastEpisode, PodcastResponse } from "@definitions/index";
+import { PodcastEpisode } from "src/definitions/index";
 import PodcastLayout from "@layouts/podcastLayout";
 import { podcasts } from "@signals/podcastSignal";
 import { episode } from "@signals/signalEpisode";
 import { useNavigate } from "@tanstack/react-router";
 import { fetcher } from "@utils/fetcher";
 import useSWR from "swr";
+import { useEffect, useState } from "react";
 
 // I am using Signal here differently than in the other view, because
 // I want to show how powerful and flexible it is, also how much complexity it can remove from the view
@@ -17,17 +18,47 @@ interface Props {
 }
 
 type TableData = PodcastEpisode & { id: number };
+
+const getDesc = async (
+  podcastList: PodcastEpisode[],
+  setter: (desc: string) => void
+) => {
+  fetch(podcastList[0].feedUrl)
+    .then((response) => {
+      if (response.status === 200) {
+        return response.text();
+      } else {
+        throw new Error("Request failed");
+      }
+    })
+    .then((data) => {
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(data, "text/xml");
+      const description =
+        xmlDoc.getElementsByTagName("description")[0].textContent;
+      setter(description || "");
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
 const PodcastDetail = ({ podcastId }: Props) => {
+  const [description, setDescription] = useState<string>("");
   const url = `https://itunes.apple.com/lookup?id=${podcastId}&media=podcast&entity=podcastEpisode&limit=20`;
-  const { data, error, isLoading } = useSWR(url, fetcher);
+  const urlWithoutCors = `https://api.allorigins.win/get?charset=ISO-8859-1&url=${encodeURIComponent(url)}`;
+
+  const { data, error } = useSWR(urlWithoutCors, fetcher, {
+    suspense: true,
+  });
+
+  // const parsedData = data && JSON.parse(data.contents);
   const navigate = useNavigate();
   if (!podcastId)
     navigate({
       to: "/",
     });
-  podcasts.value = data;
-  localStorage.setItem("podcastData", JSON.stringify(podcasts.value));
-
+  podcasts.value = JSON.parse(data?.contents);
   // I store the values in cache in case the user refreshes the page
   // here it wouldn't matter however in the episodeDetail view it would
   const handleNavigate = (rowData: PodcastEpisode) => {
@@ -39,68 +70,65 @@ const PodcastDetail = ({ podcastId }: Props) => {
       params: { podcastId: `${podcastId}`, episodeId: `${trackId}` },
     });
   };
-  const results = podcasts.value as PodcastResponse;
-  const collectionName =
-    results?.results?.length > 0
-      ? results?.results[0]?.collectionName
-      : "no collection";
-  const description =
-    results?.results?.length > 0
-      ? results?.results[1]?.description
-      : "no description";
-  const image =
-    results?.results?.length > 0 ? results?.results[0]?.artworkUrl100 : "";
-  const artist =
-    results?.results?.length > 0
-      ? results?.results[0]?.artistName
-      : "unknown artist";
+  const podcastList = podcasts.value.results;
+  const podcastLength = podcasts.value.resultCount;
+
+  useEffect(() => {
+    if (podcastList) {
+      getDesc(podcastList, setDescription);
+    }
+  }, [podcastList]);
+
   return (
     <div className="flex gap-4">
-      {isLoading && <div>Loading...</div>}
       {error && <div>Error {error}</div>}
-      {!isLoading && podcasts.value && (
+      {podcastLength > 0 && !error && (
         <PodcastLayout
           leftSide={
             <Podcard
-              collectionName={collectionName}
-              description={description || "no description"}
-              image={image}
-              artist={artist}
+              collectionName={podcastList[0].collectionName}
+              description={description}
+              image={podcastList[0].artworkUrl100}
+              artist={podcastList[0].artistName}
             />
           }
           rightSide={
             <>
               <div className="text-start w-full shadow-md p-3 font-bold">
-                Episodes: {results?.resultCount}
+                Episodes: {podcastLength || 0}
               </div>
-              <div className="w-full shadow-md mt-3 flex justify-center p-3">
-                <Table<TableData>
-                  data={results?.results.map((podcast: PodcastEpisode) => ({
-                    ...podcast,
-                    id: podcast.trackId,
-                  }))}
-                  onRowClick={handleNavigate}
-                  headers={[
-                    {
-                      id: "trackName",
-                      key: "trackName",
-                      label: "Title",
-                    },
-                    {
-                      id: "releaseDate",
-                      key: "releaseDate",
-                      label: "Date",
-                      render: (value) => new Date(value).toLocaleDateString(),
-                    },
-                    {
-                      id: "trackTimeMillis",
-                      key: "trackTimeMillis",
-                      label: "Duration",
-                      render: (value) => new Date(value).toLocaleTimeString(),
-                    },
-                  ]}
-                />
-              </div>
+              {podcastList && podcastLength > 0 && (
+                <div className="w-full shadow-md mt-3 flex justify-center p-3">
+                  <Table<TableData>
+                    data={podcastList.map((podcast: PodcastEpisode) => ({
+                      ...podcast,
+                      id: podcast.trackId,
+                    }))}
+                    onRowClick={handleNavigate}
+                    headers={[
+                      {
+                        id: "trackName",
+                        key: "trackName",
+                        label: "Title",
+                      },
+                      {
+                        id: "releaseDate",
+                        key: "releaseDate",
+                        label: "Date",
+                        render: (value) =>
+                          value && new Date(value).toLocaleDateString(),
+                      },
+                      {
+                        id: "trackTimeMillis",
+                        key: "trackTimeMillis",
+                        label: "Duration",
+                        render: (value) =>
+                          value && new Date(value).toLocaleTimeString(),
+                      },
+                    ]}
+                  />
+                </div>
+              )}
             </>
           }
         />

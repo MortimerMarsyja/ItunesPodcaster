@@ -5,7 +5,6 @@ interface Props {
   artist: string;
   onClick?: () => void;
 }
-
 const Podcard = ({
   collectionName,
   description,

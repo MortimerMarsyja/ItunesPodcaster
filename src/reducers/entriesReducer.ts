@@ -32,7 +32,10 @@ export const entriesInitialState: EntriesState = {
 
 const filteredData = (state: EntriesState, payload: string) =>
   state.data.filter((entry) => {
-    return entry["im:name"].label.toLowerCase().includes(payload.toLowerCase());
+    return (
+      entry["im:name"].label.toLowerCase().includes(payload.toLowerCase()) ||
+      entry["im:artist"].label.toLowerCase().includes(payload.toLowerCase())
+    );
   });
 
 const entriesReducer = (state: EntriesState, action: EntriesActions) => {

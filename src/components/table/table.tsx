@@ -1,3 +1,5 @@
+import React from "react";
+
 interface Identifiable {
   id: string | number;
 }
@@ -6,7 +8,7 @@ interface Header<T> {
   id: string;
   label: string;
   key: keyof T;
-  render?: (value: any) => any;
+  render?: (value: T[keyof T]) => React.ReactNode;
 }
 
 interface TableProps<T extends Identifiable> {
@@ -21,8 +23,8 @@ const Table = <T extends Identifiable>({
   onRowClick,
 }: TableProps<T>) => {
   return (
-    <div style={{ maxHeight: "600px", overflow: "auto" }}>
-      <table>
+    <div className="w-full" style={{ maxHeight: "600px", overflow: "auto" }}>
+      <table className="w-full">
         <thead>
           <tr>
             {headers.map((header) => (
@@ -56,14 +58,14 @@ const Table = <T extends Identifiable>({
               {headers.map((header, idx) => (
                 <td
                   className={`
-                text-start 
-                ${idx === 0 ? "text-[#155e75]" : ""}
-                ${idx !== 0 ? "py-3" : ""}
-                `}
+                    text-start 
+                    ${idx === 0 ? "text-[#155e75]" : ""}
+                    ${idx !== 0 ? "py-3" : ""}
+                  `}
                   key={header.key as string}
                 >
                   {header.render
-                    ? header.render(row[header.key])
+                    ? header.render(row[header.key] as T[keyof T])
                     : row[header.key]}
                 </td>
               ))}

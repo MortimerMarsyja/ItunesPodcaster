@@ -29,7 +29,7 @@ export interface Episode {
   description: string;
   shortDescription: string;
   releaseDate: string;
-  artistIds: any[];
+  artistIds: string[];
   artworkUrl160: string;
   episodeFileExtension: string;
   episodeContentType: string;

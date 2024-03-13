@@ -1,8 +1,9 @@
 interface Props {
   children: React.ReactNode;
+  isLoading?: boolean;
 }
 
-const Header = ({ children }: Props) => {
+const Header = ({ children, isLoading }: Props) => {
   return (
     <header
       className={`
@@ -26,9 +27,11 @@ const Header = ({ children }: Props) => {
       >
         {children}
       </h3>
-      <div className="bg-blue-500 w-4 h-4 ml-auto mr-4 rounded-full">
-        &nbsp;
-      </div>
+      {isLoading && (
+        <div className="bg-blue-500 w-4 h-4 ml-auto mr-4 rounded-full">
+          &nbsp;
+        </div>
+      )}
     </header>
   );
 };

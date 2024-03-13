@@ -1,3 +1,14 @@
+import { PodcastEpisode } from "@definitions/index";
 import { signal } from "@preact/signals-react";
 
-export const podcasts = signal({});
+interface PodcastSignalInterface {
+  results: PodcastEpisode[];
+  resultCount: number;
+}
+
+const initialPodcastSignal: PodcastSignalInterface = {
+  results: [],
+  resultCount: 0,
+};
+
+export const podcasts = signal<PodcastSignalInterface>(initialPodcastSignal);

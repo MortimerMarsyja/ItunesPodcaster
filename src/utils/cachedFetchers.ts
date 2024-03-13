@@ -1,4 +1,4 @@
-import { Episode, PodcastResponse } from "@definitions/index";
+import { Episode, PodcastResponse } from "src/definitions/index";
 
 export const getCachedPodcastCollectionName = (
   cachedPodcast: PodcastResponse | undefined,
