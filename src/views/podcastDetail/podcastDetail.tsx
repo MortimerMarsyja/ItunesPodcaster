@@ -1,7 +1,7 @@
 import Podcard from "@components/podcard/podcard";
 import Table from "@components/table";
 import fetcher from "@helpers/fetcher";
-import { PodcastEpisode } from "src/definitions/index";
+import { Episode, PodcastData } from "src/definitions/index";
 import PodcastLayout from "@layouts/podcastLayout";
 import { podcasts } from "@signals/podcastSignal";
 import { episode } from "@signals/signalEpisode";
@@ -13,13 +13,13 @@ interface Props {
   podcastId: string;
 }
 
-type TableData = PodcastEpisode & { id: number };
+type TableData = Episode & { id: number };
 
 const getDesc = async (
-  podcastList: PodcastEpisode[],
+  podcastData: PodcastData,
   setter: (desc: string) => void
 ) => {
-  fetch(podcastList[0].feedUrl)
+  fetch(podcastData.feedUrl)
     .then((response) => {
       if (response.status === 200) {
         return response.text();
@@ -55,9 +55,10 @@ const PodcastDetail = ({ podcastId }: Props) => {
     });
   podcasts.value = JSON.parse(data?.contents);
 
-  const handleNavigate = (rowData: PodcastEpisode) => {
+  const handleNavigate = (rowData: Episode) => {
     const { trackId } = rowData;
     episode.value = rowData;
+    console.log(rowData);
     localStorage.setItem("episodeData", JSON.stringify(rowData));
     navigate({
       to: "/podcast/$podcastId/episode/$episodeId",
@@ -65,14 +66,14 @@ const PodcastDetail = ({ podcastId }: Props) => {
     });
   };
 
-  const [podcastDescription, ...podcastList] = podcasts.value.results;
+  const [podcastData, ...podcastList] = podcasts.value.results;
   const podcastLength = podcasts.value.resultCount;
 
   useEffect(() => {
-    if (podcastList) {
-      getDesc(podcastList, setDescription);
+    if (podcastData) {
+      getDesc(podcastData, setDescription);
     }
-  }, [podcastList]);
+  }, [podcastData]);
 
   return (
     <div className="flex gap-4">
@@ -81,10 +82,10 @@ const PodcastDetail = ({ podcastId }: Props) => {
         <PodcastLayout
           leftSide={
             <Podcard
-              collectionName={podcastDescription.collectionName}
+              collectionName={podcastData.collectionName}
               description={description}
-              image={podcastDescription.artworkUrl100}
-              artist={podcastDescription.artistName}
+              image={podcastData.artworkUrl100}
+              artist={podcastData.artistName}
             />
           }
           rightSide={
@@ -95,7 +96,7 @@ const PodcastDetail = ({ podcastId }: Props) => {
               {podcastList && podcastLength > 0 && (
                 <div className="w-full shadow-md mt-3 flex justify-center p-3">
                   <Table<TableData>
-                    data={podcastList.map((podcast: PodcastEpisode) => ({
+                    data={podcastList.map((podcast: Episode) => ({
                       ...podcast,
                       id: podcast.trackId,
                     }))}

@@ -1,4 +1,4 @@
-import { Entries } from "../definitions";
+import { Entries } from "@definitions/index";
 
 export enum EntriesActionTypes {
   POPULATE = "POPULATE",
@@ -7,7 +7,7 @@ export enum EntriesActionTypes {
 
 interface PopulateEntriesAction {
   type: EntriesActionTypes.POPULATE;
-  payload: Entries;
+  payload: Entries[];
 }
 
 interface FilterEntriesAction {
@@ -16,8 +16,8 @@ interface FilterEntriesAction {
 }
 
 export type EntriesState = {
-  data: Entries;
-  filteredData: Entries;
+  data: Entries[];
+  filteredData: Entries[];
   filterValue: string;
   dataLength: number;
 };
@@ -31,7 +31,7 @@ export const entriesInitialState: EntriesState = {
 };
 
 const filteredData = (state: EntriesState, payload: string) =>
-  state.data.filter((entry) => {
+  state.data.filter((entry: Entries) => {
     return (
       entry["im:name"].label.toLowerCase().includes(payload.toLowerCase()) ||
       entry["im:artist"].label.toLowerCase().includes(payload.toLowerCase())

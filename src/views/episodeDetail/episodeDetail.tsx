@@ -1,18 +1,12 @@
 import Podcard from "@components/podcard/podcard";
-import { Episode, PodcastResponse } from "src/definitions/index";
 import PodcastLayout from "@layouts/podcastLayout";
 import { podcasts } from "@signals/podcastSignal";
 import { episode } from "@signals/signalEpisode";
 import { useNavigate } from "@tanstack/react-router";
 import {
-  getCachedEpisodeDescription,
-  getCachedEpisodeTrackName,
-  getCachedEpisodeShortDescription,
-  getCachedEpisodeAudio,
-  getCachedPodcastCollectionName,
-  getCachedPodcastImage,
-  getCachedPodcastArtist,
-} from "@utils/cachedFetchers";
+  getCachedPodcastInfoByKey,
+  getEpisodeCachedDataByKey,
+} from "@helpers/cachedFetchers";
 
 interface Props {
   episodeId: string;
@@ -39,47 +33,68 @@ const EpisodeDetail = ({ episodeId, podcastId }: Props) => {
       params: { podcastId },
     });
   };
-  const episodeData = episode.value as Episode;
-  const results = podcasts.value as PodcastResponse;
-  const collectionName = getCachedPodcastCollectionName(cachedPodcast, results);
-  const image = getCachedPodcastImage(cachedPodcast, results);
-  const artist = getCachedPodcastArtist(cachedPodcast, results);
-  const episodeShortDescription = getCachedEpisodeShortDescription(
-    episodeInStorage,
-    episodeData
+  const episodeData = episode.value;
+  const results = podcasts.value;
+  const collectionName = getCachedPodcastInfoByKey(
+    cachedPodcast,
+    results,
+    "collectionName"
   );
-  const episodeTrackName = getCachedEpisodeTrackName(
-    episodeInStorage,
-    episodeData
+  const image = getCachedPodcastInfoByKey(
+    cachedPodcast,
+    results,
+    "artworkUrl100"
   );
-  const episodeDescription = getCachedEpisodeDescription(
-    episodeInStorage,
-    episodeData
+  const artist = getCachedPodcastInfoByKey(
+    cachedPodcast,
+    results,
+    "artistName"
   );
-  const episodeAudio = getCachedEpisodeAudio(episodeInStorage, episodeData);
+  const episodeShortDescription = getEpisodeCachedDataByKey(
+    episodeInStorage,
+    episodeData,
+    "shortDescription"
+  );
+  const episodeTrackName = getEpisodeCachedDataByKey(
+    episodeInStorage,
+    episodeData,
+    "trackName"
+  );
+  const episodeDescription = getEpisodeCachedDataByKey(
+    episodeInStorage,
+    episodeData,
+    "description"
+  );
+  const episodeAudio = getEpisodeCachedDataByKey(
+    episodeInStorage,
+    episodeData,
+    "episodeUrl"
+  );
   return (
     <PodcastLayout
       leftSide={
         <Podcard
-          collectionName={collectionName}
-          description={episodeShortDescription}
-          image={image}
-          artist={artist}
+          collectionName={collectionName as string}
+          description={episodeShortDescription as string}
+          image={image as string}
+          artist={artist as string}
           onClick={backToPodcasts}
         />
       }
       rightSide={
         <div className="shadow-md">
-          <h2 className="font-bold p-3 text-start">{episodeTrackName}</h2>
+          <h2 className="font-bold p-3 text-start">
+            {episodeTrackName as string}
+          </h2>
           <div
-            dangerouslySetInnerHTML={{ __html: episodeDescription }}
+            dangerouslySetInnerHTML={{ __html: episodeDescription || <p></p> }}
             className="text-start p-3 border-b-2 border-gray-100 "
           ></div>
           <audio
             className="w-full p-3 rounded-none"
             controls
             aria-disabled={episodeAudio === ""}
-            src={episodeAudio}
+            src={episodeAudio as string}
           />
         </div>
       }

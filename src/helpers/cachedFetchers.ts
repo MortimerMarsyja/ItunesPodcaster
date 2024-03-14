@@ -1,106 +1,54 @@
-import { Episode, PodcastResponse } from "src/definitions/index";
+import { Episode, PodcastData, PodcastResponse } from "src/definitions/index";
 
-export const getCachedPodcastCollectionName = (
-  cachedPodcast: PodcastResponse | undefined,
-  results: PodcastResponse | undefined
-) => {
-  if (
-    !results?.results?.length ||
-    (results?.results?.length === 0 &&
-      cachedPodcast?.results[0]?.collectionName)
-  ) {
-    return cachedPodcast?.results[0]?.collectionName || "no collection";
+const getFallbackData = (key: keyof Episode | keyof PodcastData) => {
+  switch (key) {
+    case "description":
+      return "No description available";
+    case "trackName":
+      return "No track name available";
+    case "shortDescription":
+      return "No short description available";
+    case "collectionName":
+      return "No collection name available";
+    case "artworkUrl100":
+      return "";
+    case "artistName":
+      return "No artist available";
+    default:
+      return "";
   }
-  if (results?.results[0]?.collectionName)
-    return results?.results[0]?.collectionName;
-  return "no collection";
 };
 
-export const getCachedPodcastDescription = (
-  cachedPodcast: PodcastResponse | undefined,
-  results: PodcastResponse | undefined
+export const getCachedPodcastInfoByKey = (
+  cachedPodcast: PodcastData | undefined,
+  results: PodcastResponse,
+  key: keyof PodcastData
 ) => {
-  if (
-    !results?.results?.length ||
-    (results?.results.length === 0 && cachedPodcast?.results[1]?.description)
-  ) {
-    return cachedPodcast?.results[1]?.description;
+  if (results) {
+    const podcastData = results.results;
+    return podcastData[0][key];
   }
-  if (results?.results[1]?.description) return results?.results[1]?.description;
-  return "no description";
-};
-
-export const getCachedPodcastImage = (
-  cachedPodcast: PodcastResponse | undefined,
-  results: PodcastResponse | undefined
-) => {
-  if (
-    !results?.results?.length ||
-    (results?.results.length === 0 && cachedPodcast?.results[0]?.artworkUrl100)
-  ) {
-    return cachedPodcast?.results[0]?.artworkUrl100;
+  if (cachedPodcast) {
+    return cachedPodcast[key];
   }
-  if (results?.results[0]?.artworkUrl100)
-    return results?.results[0]?.artworkUrl100;
-  return "";
+  return getFallbackData(key);
 };
 
-export const getCachedPodcastArtist = (
-  cachedPodcast: PodcastResponse | undefined,
-  results: PodcastResponse | undefined
+export const getEpisodeCachedDataByKey = (
+  episodeInStorage: Episode | undefined,
+  episodeData: Episode,
+  key: keyof Episode
 ) => {
-  if (
-    !results?.results?.length ||
-    (results?.results?.length === 0 && cachedPodcast?.results[0]?.artistName)
-  ) {
-    return cachedPodcast?.results[0]?.artistName;
+  if (episodeInStorage) {
+    if (key in episodeInStorage) {
+      const episodeKey = key as keyof Episode;
+      return episodeInStorage[episodeKey];
+    }
+    return getFallbackData(key);
   }
-  if (results?.results[0]?.artistName) return results?.results[0]?.artistName;
-  return "unknown artist";
-};
-
-export const getEpisodeShortDescription = (
-  episodeInStorage: Episode | undefined,
-  episodeData: Episode | undefined
-) => {
-  if (episodeInStorage?.shortDescription)
-    return episodeInStorage?.shortDescription;
-  if (episodeData?.shortDescription) return episodeData?.shortDescription;
-  return "no description";
-};
-
-export const getCachedEpisodeTrackName = (
-  episodeInStorage: Episode | undefined,
-  episodeData: Episode | undefined
-) => {
-  if (episodeInStorage?.trackName) return episodeInStorage?.trackName;
-  if (episodeData?.trackName) return episodeData?.trackName;
-  return "Error 404";
-};
-
-export const getCachedEpisodeShortDescription = (
-  episodeInStorage: Episode | undefined,
-  episodeData: Episode | undefined
-) => {
-  if (episodeInStorage?.description) return episodeInStorage?.description;
-  if (episodeData?.description) return episodeData?.description;
-  return "no description";
-};
-
-export const getCachedEpisodeAudio = (
-  episodeInStorage: Episode | undefined,
-  episodeData: Episode | undefined
-) => {
-  if (episodeInStorage?.episodeUrl) return episodeInStorage?.episodeUrl;
-  if (episodeData?.episodeUrl) return episodeData?.episodeUrl;
-  return "";
-};
-
-export const getCachedEpisodeDescription = (
-  episodeInStorage: Episode | undefined,
-  episodeData: Episode | undefined
-) => {
-  if (episodeInStorage?.description) return episodeInStorage?.description;
-  if (episodeData?.description) return episodeData?.description;
-  return "no description";
+  if (key in episodeData) {
+    const episodeKey = key as keyof Episode;
+    return episodeData[episodeKey];
+  }
+  return getFallbackData(key);
 };

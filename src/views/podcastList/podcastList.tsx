@@ -5,7 +5,8 @@ import entriesReducer, {
   entriesInitialState,
 } from "../../reducers/entriesReducer";
 import { useEffect, useReducer } from "react";
-import { fetcher } from "@utils/fetcher";
+import fetcher from "@helpers/fetcher";
+import { Entries } from "@definitions/index";
 
 const url =
   "https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json";
@@ -23,11 +24,11 @@ const PodCastList = () => {
 
   const handleShowContent = () => {
     if (state.filterValue !== "") {
-      return state.filteredData.map((entry) => (
+      return state.filteredData.map((entry: Entries) => (
         <Card
           author={entry["im:artist"].label}
           imgData={{
-            url: entry["im:image"][2].label,
+            url: entry["im:image"][2].url,
             alt: entry["im:name"].label,
           }}
           title={entry["im:name"].label}
@@ -36,11 +37,11 @@ const PodCastList = () => {
         />
       ));
     }
-    return state.data.map((entry) => (
+    return state.data.map((entry: Entries) => (
       <Card
         author={entry["im:artist"].label}
         imgData={{
-          url: entry["im:image"][2].label,
+          url: entry["im:image"][2].url,
           alt: entry["im:name"].label,
         }}
         title={entry["im:name"].label}
