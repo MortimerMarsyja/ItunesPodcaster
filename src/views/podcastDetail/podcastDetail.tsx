@@ -58,7 +58,6 @@ const PodcastDetail = ({ podcastId }: Props) => {
   const handleNavigate = (rowData: Episode) => {
     const { trackId } = rowData;
     episode.value = rowData;
-    console.log(rowData);
     localStorage.setItem("episodeData", JSON.stringify(rowData));
     navigate({
       to: "/podcast/$podcastId/episode/$episodeId",
