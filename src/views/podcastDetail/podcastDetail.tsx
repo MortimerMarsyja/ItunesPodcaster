@@ -116,15 +116,19 @@ const PodcastDetail = ({ podcastId }: Props) => {
                         id: "releaseDate",
                         key: "releaseDate",
                         label: "Date",
-                        render: (value) =>
-                          value && new Date(value).toLocaleDateString(),
+                        render: (value) => {
+                          const date = value as string;
+                          return date && new Date(date).toLocaleDateString();
+                        },
                       },
                       {
                         id: "trackTimeMillis",
                         key: "trackTimeMillis",
                         label: "Duration",
-                        render: (value) =>
-                          value && new Date(value).toLocaleTimeString(),
+                        render: (value) => {
+                          const date = value as string;
+                          return date && new Date(date).toLocaleTimeString();
+                        },
                       },
                     ]}
                   />

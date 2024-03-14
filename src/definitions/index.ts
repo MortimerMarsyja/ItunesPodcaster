@@ -66,6 +66,7 @@ export interface PodcastEpisode {
   collectionPrice: number;
   trackPrice: number;
   trackRentalPrice: number;
+  trackTimeMillis: number;
   collectionHdPrice: number;
   trackHdPrice: number;
   trackHdRentalPrice: number;
