@@ -75,7 +75,6 @@ const EpisodeDetail = ({ episodeId, podcastId }: Props) => {
             dangerouslySetInnerHTML={{ __html: episodeDescription }}
             className="text-start p-3 border-b-2 border-gray-100 "
           ></div>
-          {/* the audio element will be provided by the browser so it might not look like the one in the image provided */}
           <audio
             className="w-full p-3 rounded-none"
             controls

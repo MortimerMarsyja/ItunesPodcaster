@@ -2,7 +2,7 @@ import { createLazyFileRoute, getRouteApi } from "@tanstack/react-router";
 import EpisodeDetail from "@views/episodeDetail";
 import MainLayout from "@layouts/mainLayout";
 
-const routeApi = getRouteApi("/podcasts/$podcastId/episode/$episodeId");
+const routeApi = getRouteApi("/podcast/$podcastId/episode/$episodeId");
 
 const Episode = () => {
   const routeParams = routeApi.useParams<{

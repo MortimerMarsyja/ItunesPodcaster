@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 // as you can see it eliminates the need to use any other state managers
 // (I could use Redux or Zustand if needed but this is much cleaner and the test doesn't tells you to use them)
 interface Props {
-  podcastId: number;
+  podcastId: string;
 }
 
 type TableData = PodcastEpisode & { id: number };
@@ -46,7 +46,7 @@ const getDesc = async (
 const PodcastDetail = ({ podcastId }: Props) => {
   const [description, setDescription] = useState<string>("");
   const url = `https://itunes.apple.com/lookup?id=${podcastId}&media=podcast&entity=podcastEpisode&limit=20`;
-  const urlWithoutCors = `https://api.allorigins.win/get?charset=ISO-8859-1&url=${encodeURIComponent(url)}`;
+  const urlWithoutCors = `https://api.allorigins.win/get?charset=UTF-8&url=${encodeURIComponent(url)}`;
 
   const { data, error } = useSWR(urlWithoutCors, fetcher, {
     suspense: true,
@@ -70,7 +70,8 @@ const PodcastDetail = ({ podcastId }: Props) => {
       params: { podcastId: `${podcastId}`, episodeId: `${trackId}` },
     });
   };
-  const podcastList = podcasts.value.results;
+
+  const [podcastDescription, ...podcastList] = podcasts.value.results;
   const podcastLength = podcasts.value.resultCount;
 
   useEffect(() => {
@@ -86,10 +87,10 @@ const PodcastDetail = ({ podcastId }: Props) => {
         <PodcastLayout
           leftSide={
             <Podcard
-              collectionName={podcastList[0].collectionName}
+              collectionName={podcastDescription.collectionName}
               description={description}
-              image={podcastList[0].artworkUrl100}
-              artist={podcastList[0].artistName}
+              image={podcastDescription.artworkUrl100}
+              artist={podcastDescription.artistName}
             />
           }
           rightSide={
