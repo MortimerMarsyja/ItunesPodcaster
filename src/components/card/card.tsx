@@ -1,10 +1,12 @@
 import { useNavigate } from "@tanstack/react-router";
-import { ImgInfo } from "../../definitions";
 
 interface Props {
   title: string;
   author: string;
-  imgData: ImgInfo;
+  imgData: {
+    url: string;
+    alt: string;
+  };
   link: string;
 }
 

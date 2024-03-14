@@ -11,7 +11,6 @@ import { Entries } from "@definitions/index";
 const url =
   "https://itunes.apple.com/us/rss/toppodcasts/limit=100/genre=1310/json";
 const PodCastList = () => {
-  // SWR will cache data so that it loads faster next time
   const { data, error, isLoading } = useSWR(url, fetcher);
   const [state, dispatch] = useReducer(entriesReducer, entriesInitialState);
   useEffect(() => {
@@ -28,7 +27,7 @@ const PodCastList = () => {
         <Card
           author={entry["im:artist"].label}
           imgData={{
-            url: entry["im:image"][2].url,
+            url: entry["im:image"][2].label,
             alt: entry["im:name"].label,
           }}
           title={entry["im:name"].label}
@@ -41,7 +40,7 @@ const PodCastList = () => {
       <Card
         author={entry["im:artist"].label}
         imgData={{
-          url: entry["im:image"][2].url,
+          url: entry["im:image"][2].label,
           alt: entry["im:name"].label,
         }}
         title={entry["im:name"].label}

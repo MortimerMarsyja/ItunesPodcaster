@@ -1,6 +1,6 @@
 export interface ImgInfo {
   alt: string;
-  url: string;
+  label: string;
 }
 export interface Genre {
   name: string;
