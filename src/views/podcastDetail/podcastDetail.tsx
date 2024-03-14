@@ -1,18 +1,14 @@
 import Podcard from "@components/podcard/podcard";
 import Table from "@components/table";
+import fetcher from "@helpers/fetcher";
 import { PodcastEpisode } from "src/definitions/index";
 import PodcastLayout from "@layouts/podcastLayout";
 import { podcasts } from "@signals/podcastSignal";
 import { episode } from "@signals/signalEpisode";
 import { useNavigate } from "@tanstack/react-router";
-import { fetcher } from "@utils/fetcher";
 import useSWR from "swr";
 import { useEffect, useState } from "react";
 
-// I am using Signal here differently than in the other view, because
-// I want to show how powerful and flexible it is, also how much complexity it can remove from the view
-// as you can see it eliminates the need to use any other state managers
-// (I could use Redux or Zustand if needed but this is much cleaner and the test doesn't tells you to use them)
 interface Props {
   podcastId: string;
 }
@@ -52,15 +48,13 @@ const PodcastDetail = ({ podcastId }: Props) => {
     suspense: true,
   });
 
-  // const parsedData = data && JSON.parse(data.contents);
   const navigate = useNavigate();
   if (!podcastId)
     navigate({
       to: "/",
     });
   podcasts.value = JSON.parse(data?.contents);
-  // I store the values in cache in case the user refreshes the page
-  // here it wouldn't matter however in the episodeDetail view it would
+
   const handleNavigate = (rowData: PodcastEpisode) => {
     const { trackId } = rowData;
     episode.value = rowData;

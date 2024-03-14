@@ -17,6 +17,17 @@ interface TableProps<T extends Identifiable> {
   onRowClick?: (row: T) => void;
 }
 
+const handleRenderTdContent = <T extends Identifiable>(
+  header: Header<T>,
+  row: T
+) => {
+  if (header.render) {
+    return header.render(row[header.key]);
+  } else {
+    return String(row[header.key]);
+  }
+};
+
 const Table = <T extends Identifiable>({
   data,
   headers,
@@ -43,7 +54,7 @@ const Table = <T extends Identifiable>({
           </tr>
         </thead>
         <tbody>
-          {data.map((row, idx) => (
+          {data.map((row) => (
             <tr
               onClick={() => onRowClick && onRowClick(row)}
               className={`
@@ -64,9 +75,7 @@ const Table = <T extends Identifiable>({
                   `}
                   key={header.key as string}
                 >
-                  {header.render
-                    ? header.render(row[header.key] as T[keyof T])
-                    : row[header.key]}
+                  {handleRenderTdContent(header, row)}
                 </td>
               ))}
             </tr>

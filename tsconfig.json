@@ -23,7 +23,7 @@
     "paths": {
       "@views/*": ["src/views/*"],
       "@layouts/*": ["src/layouts/*"],
-      "@utils": ["src/utils/*"],
+      "@helpers": ["src/helpers/*"],
       "@components/*": ["src/components/*"],
       "@routes": ["src/routes/*"],
       "@definitions/*": ["src/definitions/*"],

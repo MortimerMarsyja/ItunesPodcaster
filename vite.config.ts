@@ -8,7 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@views": "/src/views",
-      "@utils": "/src/utils",
+      "@helpers": "/src/helpers",
       "@components": "/src/components",
       "@typings": "/src/typings",
       "@reducers": "/src/reducers",
